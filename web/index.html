@@ -36,16 +36,18 @@
   <script src="flutter_bootstrap.js" async></script>
 
   <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
+    // Import the functions you need from the SDKs you need    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.0/firebase-analytics.js";
     // TODO: Add SDKs for Firebase products that you want to use
     // https://firebase.google.com/docs/web/setup#available-libraries
 
     // Your web app's Firebase configuration
     // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    // NOTE: Firebase configuration moved to .env file for security
+    // Uncomment and configure when Firebase integration is needed
+    /*
     const firebaseConfig = {
-      apiKey: "AIzaSyCLWAeZFXGvTr6SbDs3-PscKgzI42Os9rY",
+      apiKey: "{{FIREBASE_API_KEY}}", // This should be loaded from environment
       authDomain: "doppelganger-3f7f5.firebaseapp.com",
       projectId: "doppelganger-3f7f5",
       storageBucket: "doppelganger-3f7f5.firebasestorage.app",
@@ -57,6 +59,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
+    */
   </script>
 </body>
 </html>

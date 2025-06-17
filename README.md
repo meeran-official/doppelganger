@@ -96,12 +96,21 @@ dependencies:
    ```
 
 2. **Create `.env` file in project root:**
+   ```bash
+   # Copy the template and fill in your keys
+   cp .env.template .env
+   ```
+   
+   Or create manually:
    ```env
    # Gemini AI API Key (for chat functionality and TTS)
    GEMINI_API_KEY=your_gemini_api_key_here
    
    # Weather API Key (for location-based weather integration)
    WEATHER_API_KEY=your_openweather_api_key_here
+   
+   # Firebase API Key (for future web features - moved from web/index.html)
+   FIREBASE_API_KEY=your_firebase_api_key_here
    ```
 
 3. **Install dependencies and run:**
@@ -113,6 +122,7 @@ dependencies:
 ### API Keys Required
 - **Google Gemini API**: For AI chat functionality and TTS (Required)
 - **OpenWeather API**: For location-based weather integration (Optional)
+- **Firebase API**: For future web features (Optional - moved from hardcoded)
 
 ### Getting API Keys
 1. **Gemini API**: Visit [Google AI Studio](https://makersuite.google.com/app/apikey) to get your free API key
@@ -146,9 +156,10 @@ dependencies:
 
 ### Privacy & Security
 - **Local-First Storage**: Primary data storage on device using SQLite
-- **API Key Security**: Secure handling of external service credentials
+- **API Key Security**: All API keys moved to .env file (not committed to version control)
 - **User-Controlled Data**: Complete control over data export and deletion
 - **Transparent Permissions**: Clear communication about required permissions
+- **Template Configuration**: .env.template provided for easy setup
 
 ## 🐛 Troubleshooting
 
