@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
@@ -66,8 +65,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final TextEditingController _textController = TextEditingController();  String _response = "AI response will appear here...";
-  bool _isLoading = false;
   String _userName = "User";
 
   String _weatherGreeting = "Welcome! Getting ready for you...";
@@ -228,76 +225,9 @@ class _HomePageState extends State<HomePage> {
       });
       // Also refresh the weather greeting to use the new name
       _fetchWeatherAndLocation();
-    }
-  }
-
-  // This is where all the magic happens!
-  // This is the updated, final version of our logic function
-  Future<void> _generateResponse() async {
-    // First, check if the user actually typed something
-    if (_textController.text.trim().isEmpty) {
-      // Show a small popup message if the text field is empty
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter a query.')));
-      return;
-    }
-
-    // Tell the UI to start loading
-    setState(() {
-      _isLoading = true;
-      _response = ""; // Clear the previous response
-    });    try {
-      // 1. GET USER NAME FROM SETTINGS
-      final userName = await DatabaseHelper.instance.getPreference('user_name') ?? 'there';
-      
-      // 2. FETCH FACTS FROM DATABASE (The New Part!)
-      // This gets all the facts you saved on the other screen.
-      final facts = await DatabaseHelper.instance.getAllFacts();
-
-      // 3. BUILD THE CONTEXT STRING
-      // We create a detailed prompt that "trains" the AI for this one conversation.
-      final contextBuilder = StringBuffer();
-      contextBuilder.writeln(
-          "IMPORTANT: You are a helpful AI assistant for a person${userName.isNotEmpty ? ' named $userName' : ''}. Your ONLY source of knowledge is the following set of facts. Answer the user's question based *only* on these facts. If the answer is not contained in the facts, you MUST say 'I do not have that information.'. Do not use any external knowledge.\n");
-      contextBuilder.writeln("--- FACTS ---");
-      for (var fact in facts) {
-        contextBuilder.writeln("Question: ${fact.question}");
-        contextBuilder.writeln("Answer: ${fact.answer}");
-      }
-      contextBuilder.writeln("--- END OF FACTS ---\n");
-
-      // 3. COMBINE CONTEXT WITH THE USER'S QUERY
-      final finalPrompt =
-          '${contextBuilder.toString()}User\'s Question: ${_textController.text}';      // --- THE REST OF THE CODE IS THE SAME AS BEFORE ---
-      final apiKey = dotenv.env['GEMINI_API_KEY'];
-      if (apiKey == null) {
-        throw Exception("Gemini API Key not found in .env file");
-      }
-
-      final model =
-      GenerativeModel(model: 'gemini-2.5-flash-preview-05-20', apiKey: apiKey);
-
-      // Send the big, context-rich prompt to the AI
-      final response = await model.generateContent([Content.text(finalPrompt)]);
-
-      // Update the UI with the final response
-      setState(() {
-        _response = response.text ?? "Could not get a response.";
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _response = "Error: ${e.toString()}";
-        _isLoading = false;
-      });
-    }
-  }
+    }  }
 
   @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }  @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: _buildDrawer(context),
@@ -468,270 +398,25 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ],
-                  ),
-                ),
-                
-                const SizedBox(height: 24),                // Quick Chat Section
-                Expanded(
-                  child: FadeInUp(
-                    duration: const Duration(milliseconds: 800),
-                    delay: const Duration(milliseconds: 400),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,                          colors: [
-                            const Color(0xFF1C1C1E).withValues(alpha: 0.9),
-                            const Color(0xFF2C2C2E).withValues(alpha: 0.7),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: const Color(0xFF39A7FF).withValues(alpha: 0.3),
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF39A7FF).withValues(alpha: 0.1),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF39A7FF).withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  Icons.chat_bubble_outline,
-                                  color: const Color(0xFF39A7FF),
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                'Quick Chat',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const Spacer(),
-                              if (_response.isNotEmpty)
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _response = '';
-                                      _textController.clear();
-                                    });
-                                  },
-                                  icon: Icon(
-                                    Icons.clear,
-                                    color: Colors.grey[400],
-                                    size: 18,
-                                  ),
-                                  constraints: const BoxConstraints(
-                                    minWidth: 30,
-                                    minHeight: 30,
-                                  ),
-                                  padding: const EdgeInsets.all(4),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Expanded(
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2C2C2E),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: Colors.grey.withValues(alpha: 0.1),
-                                ),
-                              ),
-                              child: _isLoading
-                                  ? Center(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          SizedBox(
-                                            width: 24,
-                                            height: 24,
-                                            child: CircularProgressIndicator(
-                                              color: const Color(0xFF39A7FF),
-                                              strokeWidth: 2.5,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Thinking...',
-                                            style: TextStyle(
-                                              color: Colors.grey[400],
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )                                  : SingleChildScrollView(
-                                      child: Text(
-                                        _response.isEmpty 
-                                            ? '💬 Ask me anything! I can help with quick questions, provide information, or assist with various topics.'
-                                            : _response,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          height: 1.5,
-                                          color: _response.isEmpty ? Colors.grey[500] : Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),const SizedBox(height: 16),
-
-                // Enhanced Input Section
-                FadeInUp(
-                  duration: const Duration(milliseconds: 800),
-                  delay: const Duration(milliseconds: 600),
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(                        colors: [
-                          const Color(0xFF39A7FF).withValues(alpha: 0.2),
-                          const Color(0xFF00D4FF).withValues(alpha: 0.1),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF2C2C2E),
-                              borderRadius: BorderRadius.circular(26),
-                            ),
-                            child: TextField(
-                              controller: _textController,
-                              decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.transparent,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(26),
-                                  borderSide: BorderSide.none,
-                                ),
-                                hintText: '💭 Ask me anything...',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 16,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 16,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.chat_bubble_outline,
-                                  color: Colors.grey[500],
-                                  size: 20,
-                                ),
-                              ),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                              onSubmitted: (_) => _isLoading ? null : _generateResponse(),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                const Color(0xFF39A7FF),
-                                const Color(0xFF00D4FF),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(22),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF39A7FF).withValues(alpha: 0.3),
-                                blurRadius: 8,
-                                spreadRadius: 1,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: IconButton(
-                            onPressed: _isLoading ? null : _generateResponse,
-                            icon: Icon(
-                              _isLoading ? Icons.hourglass_empty : Icons.send_rounded,
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                            padding: const EdgeInsets.all(12),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),                ),
               ],
             ),
           ),
         ),
-      ),
-      floatingActionButton: Stack(
-        children: [
-          // Voice Chat FAB
-          Positioned(
-            bottom: 80,
-            right: 0,            child: ExquisiteUIHelpers.buildFloatingActionButton(
-              heroTag: "voice_chat_fab", // Unique hero tag
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SmartVoiceChatPage(
-                    userName: _userName,
-                    weatherInfo: _weatherGreeting,
-                  ),
-                ),
-              ),
-              icon: Icons.mic,
-              tooltip: 'Voice Chat',
-              backgroundColor: const Color(0xFF4285F4),
+      ),      floatingActionButton: ExquisiteUIHelpers.buildFloatingActionButton(
+        heroTag: "voice_chat_fab", // Unique hero tag
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SmartVoiceChatPage(
+              userName: _userName,
+              weatherInfo: _weatherGreeting,
             ),
           ),
-          // Main FAB for quick input
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: ExquisiteUIHelpers.buildFloatingActionButton(
-              heroTag: "quick_send_fab", // Unique hero tag
-              onPressed: () {
-                if (_textController.text.isNotEmpty && !_isLoading) {
-                  _generateResponse();
-                }
-              },
-              icon: _isLoading ? Icons.hourglass_empty : Icons.send,
-              tooltip: 'Send Quick Message',
-            ),
-          ),
-        ],
+        ),
+        icon: Icons.mic,
+        tooltip: 'Voice Chat',
+        backgroundColor: const Color(0xFF4285F4),
       ),
     );
   }

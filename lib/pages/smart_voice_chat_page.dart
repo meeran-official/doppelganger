@@ -504,171 +504,179 @@ class _SmartVoiceChatPageState extends State<SmartVoiceChatPage>
                   ),
                 ),
               ),
-              
-              // Status and Results
+                // Status and Results
               Expanded(
                 flex: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      // Current status
-                      if (_isListening)
-                        SlideInUp(
-                          child: ExquisiteUIHelpers.buildGlassmorphicCard(
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.mic,
-                                    color: _isFactMode ? const Color(0xFF34A853) : const Color(0xFF4285F4),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    _isFactMode ? 'Recording fact...' : 'Listening...',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // Current status
+                        if (_isListening)
+                          SlideInUp(
+                            child: ExquisiteUIHelpers.buildGlassmorphicCard(
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.mic,
+                                      color: _isFactMode ? const Color(0xFF34A853) : const Color(0xFF4285F4),
                                     ),
-                                  ),
-                                  const Spacer(),
-                                  GestureDetector(
-                                    onTap: _stopListening,
-                                    child: Icon(
-                                      Icons.close,
-                                      color: Colors.red[400],
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      _isFactMode ? 'Recording fact...' : 'Listening...',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    const Spacer(),
+                                    GestureDetector(
+                                      onTap: _stopListening,
+                                      child: Icon(
+                                        Icons.close,
+                                        color: Colors.red[400],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      
-                      if (_isProcessing)
-                        SlideInUp(
-                          child: ExquisiteUIHelpers.buildGlassmorphicCard(
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        _isFactMode ? const Color(0xFF34A853) : const Color(0xFF4285F4),
+                        
+                        if (_isProcessing)
+                          SlideInUp(
+                            child: ExquisiteUIHelpers.buildGlassmorphicCard(
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                          _isFactMode ? const Color(0xFF34A853) : const Color(0xFF4285F4),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    _isFactMode ? 'Processing fact...' : 'Thinking...',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
+                                    const SizedBox(width: 12),
+                                    Text(
+                                      _isFactMode ? 'Processing fact...' : 'Thinking...',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      
-                      const SizedBox(height: 16),
-                      
-                      // Speech Text
-                      if (_speechText.isNotEmpty)
-                        FadeInUp(
-                          child: ExquisiteUIHelpers.buildGlassmorphicCard(
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.hearing,
-                                        color: Colors.blue[300],
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'You said:',
-                                        style: TextStyle(
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Speech Text
+                        if (_speechText.isNotEmpty)
+                          FadeInUp(
+                            child: ExquisiteUIHelpers.buildGlassmorphicCard(
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.hearing,
                                           color: Colors.blue[300],
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    _speechText,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          'You said:',
+                                          style: TextStyle(
+                                            color: Colors.blue[300],
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      _speechText,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      
-                      const SizedBox(height: 16),
-                      
-                      // Response Text
-                      if (_responseText.isNotEmpty)
-                        FadeInUp(
-                          child: ExquisiteUIHelpers.buildGlassmorphicCard(
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        _responseText.startsWith('✅') ? Icons.check_circle : Icons.smart_toy,
-                                        color: _responseText.startsWith('✅') ? Colors.green[300] : Colors.purple[300],
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        _responseText.startsWith('✅') ? 'Success:' : 'Assistant:',
-                                        style: TextStyle(
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Response Text
+                        if (_responseText.isNotEmpty)
+                          FadeInUp(
+                            child: ExquisiteUIHelpers.buildGlassmorphicCard(
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          _responseText.startsWith('✅') ? Icons.check_circle : Icons.smart_toy,
                                           color: _responseText.startsWith('✅') ? Colors.green[300] : Colors.purple[300],
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
+                                          size: 20,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    _responseText,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          _responseText.startsWith('✅') ? 'Success:' : 'Assistant:',
+                                          style: TextStyle(
+                                            color: _responseText.startsWith('✅') ? Colors.green[300] : Colors.purple[300],
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      _responseText,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                      maxLines: 5,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                        
+                        // Add some bottom padding for scroll space
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
