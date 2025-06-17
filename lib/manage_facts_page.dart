@@ -432,8 +432,8 @@ class _ManageFactsPageState extends State<ManageFactsPage> with TickerProviderSt
               colors: [Color(0xFF39A7FF), Color(0xFF00D4FF)],
             ),
             shape: BoxShape.circle,
-          ),
-          child: FloatingActionButton(
+          ),          child: FloatingActionButton(
+            heroTag: "add_fact_fab", // Unique hero tag
             onPressed: () => _showAddFactDialog(),
             backgroundColor: Colors.transparent,
             elevation: 0,

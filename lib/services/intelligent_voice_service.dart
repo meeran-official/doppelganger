@@ -46,17 +46,18 @@ Examples:
 - "Remember that I work at Google" → FACT: Where do I work? | I work at Google | Professional
 - "Hello how are you" → CHAT: Hello! I'm doing well, thank you for asking.
 """)
-      ]);
-
-      final response = await aiCall.timeout(
+      ]);      final response = await aiCall.timeout(
         const Duration(seconds: 10),
         onTimeout: () => throw Exception('AI processing timeout'),
       );
       
       final responseText = response.text ?? '';
+      print('Gemini response: $responseText'); // Debug logging
       
       if (responseText.startsWith('FACT:')) {
         final parts = responseText.substring(5).split('|').map((s) => s.trim()).toList();
+        print('Parsed fact parts: $parts'); // Debug logging
+        
         if (parts.length >= 3) {          final fact = Fact(
             question: parts[0],
             answer: parts[1],
@@ -67,13 +68,24 @@ Examples:
             updatedAt: DateTime.now(),
           );
           
-          await _databaseHelper.insertFact(fact);
-          return {
-            'success': true,
-            'message': 'Great! I\'ve added this to your ${parts[2].toLowerCase()} facts.',
-            'fact': fact,
-            'isNewFact': true,
-          };
+          try {
+            await _databaseHelper.insertFact(fact);
+            print('Fact inserted successfully: ${fact.question}'); // Debug logging
+            return {
+              'success': true,
+              'message': 'Great! I\'ve added this to your ${parts[2].toLowerCase()} facts.',
+              'fact': fact,
+              'isNewFact': true,
+            };
+          } catch (e) {
+            print('Database error: $e'); // Debug logging
+            return {
+              'success': false,
+              'message': 'Failed to save fact to database: $e',
+            };
+          }
+        } else {
+          print('Invalid fact format - not enough parts'); // Debug logging
         }
       }
       

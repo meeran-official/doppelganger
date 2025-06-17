@@ -58,13 +58,13 @@ class ExquisiteUIHelpers {
       },
     );
   }
-
   // Floating action button with ripple effect
   static Widget buildFloatingActionButton({
     required VoidCallback onPressed,
     required IconData icon,
     String? tooltip,
     Color backgroundColor = const Color(0xFF39A7FF),
+    Object? heroTag, // Add heroTag parameter to fix multiple FAB issues
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -78,6 +78,7 @@ class ExquisiteUIHelpers {
         ],
       ),
       child: FloatingActionButton(
+        heroTag: heroTag, // Add unique hero tag
         onPressed: onPressed,
         backgroundColor: backgroundColor,
         elevation: 0,

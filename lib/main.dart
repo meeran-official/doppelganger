@@ -700,8 +700,8 @@ class _HomePageState extends State<HomePage> {
           // Voice Chat FAB
           Positioned(
             bottom: 80,
-            right: 0,
-            child: ExquisiteUIHelpers.buildFloatingActionButton(
+            right: 0,            child: ExquisiteUIHelpers.buildFloatingActionButton(
+              heroTag: "voice_chat_fab", // Unique hero tag
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -721,6 +721,7 @@ class _HomePageState extends State<HomePage> {
             bottom: 0,
             right: 0,
             child: ExquisiteUIHelpers.buildFloatingActionButton(
+              heroTag: "quick_send_fab", // Unique hero tag
               onPressed: () {
                 if (_textController.text.isNotEmpty && !_isLoading) {
                   _generateResponse();
